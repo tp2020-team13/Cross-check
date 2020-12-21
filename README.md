@@ -21,6 +21,7 @@ Run the install script, this will check and download the neccessary prerequisiti
 ```sh
 $ sudo ./install.sh --full
 ```
+> **_NOTE:_**  Please check the config file before installation!
 
 Automatically installed software:
 - docker-compose 1.22.0
