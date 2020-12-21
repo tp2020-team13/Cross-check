@@ -11,8 +11,9 @@ We want to motivate students to first get the information themselves and contact
 ## Requirements
 
 Hardware:
-- ?GB RAM
-- ?x CPU
+- 1GB RAM
+- 1x CPU
+- min 10GB memory
 
 ## Installation
 
