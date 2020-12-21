@@ -28,4 +28,4 @@ $ ./install.sh --help
 
 ## Contact
 
-For questions, please contact [tp.tim13@gmail.com](tp.tim13@gmail.com).
+For questions, please contact <tp.tim13@gmail.com>.
