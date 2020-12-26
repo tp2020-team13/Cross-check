@@ -1,0 +1,28 @@
+version: '3'
+services:
+  postgres:
+    build: database/.
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - database-data_production:/var/lib/postgresql/data/ # persist data even if container shuts down
+    expose:
+      - 5433
+    networks:
+      - nginx-certbot-master_default
+  backend:
+    build: backend/.
+    links:
+      - postgres
+    ports:
+      - "8182:8080"
+    networks:
+      - nginx-certbot-master_default
+
+volumes:
+  database-data_production: # named volumes can be managed easier using docker-compose
+networks:
+  nginx-certbot-master_default:
+    external: true
