@@ -1,4 +1,4 @@
-FROM TODO:cross-check/backend
+FROM stucrosscheck/backend
 
 COPY data/application.production.conf /application.production.conf
 COPY ./migrate_and_run.sh /migrate_and_run.sh
