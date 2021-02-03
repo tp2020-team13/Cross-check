@@ -20,6 +20,12 @@ services:
       - "8182:8080"
     networks:
       - nginx-certbot-master_default
+  frontend:
+    build: frontend/.
+    volumes:
+       - ./frontend/config.json:/usr/share/nginx/html/config.json
+    networks:
+      - nginx-certbot-master_default
 
 volumes:
   database-data_production: # named volumes can be managed easier using docker-compose
