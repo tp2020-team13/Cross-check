@@ -141,14 +141,12 @@ function installPrerequisities {
 }
 
 function fullInstall {
-  echo -e ""
-  echo -e "**Full installation has started**"
-  echo -e ""
+  echo -e "\n**Full installation has started**\n"
   checkIfRoot
-  checkDockerGroup
   checkConfig
   exportConfigVariable
   installPrerequisities
+  checkDockerGroup
 }
 
 # =======================================
