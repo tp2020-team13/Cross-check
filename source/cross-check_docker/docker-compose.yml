@@ -18,10 +18,14 @@ services:
       - postgres
     ports:
       - "8182:8080"
+    depends_on:
+      - "postgres"
     networks:
       - nginx-certbot-master_default
   frontend:
     build: frontend/.
+    ports:
+      - "4200:80"
     volumes:
        - ./frontend/config.json:/usr/share/nginx/html/config.json
     networks:

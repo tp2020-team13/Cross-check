@@ -1,0 +1,5 @@
+{
+  "production": false,
+  "baseUrl": "https://localhost:8182/be-cross-check/",
+  "baseWs": "wss://localhost:8182/be-cross-check/"
+}
