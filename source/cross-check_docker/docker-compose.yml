@@ -20,6 +20,11 @@ services:
       - "8182:8080"
     depends_on:
       - "postgres"
+    healthcheck:
+      test: curl -f localhost:8182/be-cross-check/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - nginx-certbot-master_default
   frontend:
