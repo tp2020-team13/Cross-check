@@ -1,4 +1,4 @@
-version: '3'
+version: '2.2'
 services:
   postgres:
     build: database/.
@@ -10,34 +10,35 @@ services:
       - database-data_production:/var/lib/postgresql/data/ # persist data even if container shuts down
     expose:
       - 5433
-    networks:
-      - nginx-certbot-master_default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    container_name: crosscheck_database
   backend:
     build: backend/.
+    restart: always
     links:
       - postgres
     ports:
       - "8182:8080"
     depends_on:
-      - "postgres"
-    healthcheck:
-      test: curl -f localhost:8182/be-cross-check/ || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - nginx-certbot-master_default
+      postgres:
+        condition: service_healthy         
+        #healthcheck:
+        #test: curl -f localhost:8182/be-cross-check/ || exit 1
+        #interval: 10s
+        #timeout: 5s
+        #retries: 5
+    container_name: crosscheck_backend
   frontend:
     build: frontend/.
     ports:
       - "4200:80"
     volumes:
        - ./frontend/config.json:/usr/share/nginx/html/config.json
-    networks:
-      - nginx-certbot-master_default
+    container_name: crosscheck_frontend
 
 volumes:
   database-data_production: # named volumes can be managed easier using docker-compose
-networks:
-  nginx-certbot-master_default:
-    external: true

@@ -7,7 +7,7 @@ set -e
 # =======================================
 
 function example {
-  echo -e "example: $0 --full"
+  echo -e "example: sudo $0 --localhost"
 }
 
 function usage {
@@ -33,7 +33,8 @@ function help {
   echo -e ""
     echo -e "OPTIONS:"
     echo -e " -h | --help        Display this message and exit"
-    echo -e " -f | --full        Full installation and deployment"
+    #echo -e " -f | --full        Full installation and deployment"
+    echo -e " -l | --localhost   Run the project as localhost"
     echo -e ""
   example
 }
@@ -55,6 +56,11 @@ function argumentsCheck {
 
       -f|--full)
       fullInstall
+      exit
+      ;;
+
+      -l|--localhost)
+      localhostInstall
       exit
       ;;
 
@@ -112,31 +118,20 @@ function exportConfigVariable {
   sed -i -E "s/(    password = \").*(\")/\1$dbPassword\2/" ./source/cross-check_docker/backend/data/application.production.conf
 }
 
-function installPrerequisities {
-  echo -e "${INFO} Configuring docker-ce and docker-compose"
-  echo -e "${INFO} Checking curl"
-  apt-get update -qq
-  apt-get install curl -qq -y
+function checkPrerequisities {
 
   if test -f /usr/bin/dockerd; then
     dockerdVersion=$(/usr/bin/dockerd --version)
-    echo -e "${INFO} $dockerdVersion already installed, skipping..."
+    echo -e "${INFO} $dockerdVersion already installed"
   else
-    echo -e "${INFO} Installing docker-ce"
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-    apt-get install software-properties-common
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    apt-get update -qq
-    apt-get install -qq -y $dockerInstallVersion
+    echo -e "Please install docker-ce"
   fi
 
-  if test -f /usr/local/bin/docker-compose; then
+  if test -f docker-compose; then
     dockerComposeVersion=$(/usr/local/bin/docker-compose --version)
-    echo -e "${INFO} $dockerComposeVersion already installed, skipping..."
+    echo -e "${INFO} $dockerComposeVersion already installed"
   else
-    echo -e "${INFO} Installing docker-compose"
-    curl -sS -L "https://github.com/docker/compose/releases/download/$dockerComposeInstallVersion/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
+    echo -e "Please install docker-compose"
   fi
 }
 
@@ -145,8 +140,18 @@ function fullInstall {
   checkIfRoot
   checkConfig
   exportConfigVariable
-  installPrerequisities
+  checkPrerequisities
   checkDockerGroup
+}
+
+function localhostInstall {
+  echo -e "\n**Localhost installation has started**\n"
+  checkIfRoot
+  checkConfig
+  #checkPrerequisities
+  cd ./source/cross-check_docker
+  docker-compose up --build
+  cd ../..
 }
 
 # =======================================
