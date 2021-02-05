@@ -1,5 +1,5 @@
 domain=localhost
-adminUserName=adminUserName
+adminUserName=admin
 adminPassword=admin
 dbUserName=postgres
 dbPassword=postgres
