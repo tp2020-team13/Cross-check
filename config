@@ -1,6 +1,9 @@
-domain=localhost
-adminUsername=admin
-adminPassword=admin
-dbUsername=postgres
-dbPassword=postgres
-secretKey=123456789abcdefghijklmnoprstuvxz
+domain=example.org
+adminUsername=admin1
+adminPassword=admin2
+dbUsername=postgres1
+dbPassword=postgres2
+secretKey=
+email=
+backendVersion=latest
+frontendVersion=latest

@@ -1,3 +1,3 @@
 FROM stucrosscheck/frontend
 
-COPY config.json /usr/share/nginx/html/
+COPY ./config/config.json /usr/share/nginx/html/
