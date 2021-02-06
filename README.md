@@ -30,12 +30,13 @@ $ ./install.sh --localhost
 ```
 > **_NOTE:_**  Only for demonstration purposes! Not all functionality is available!
 
-[comment]: <> (Run the install script, this will check and download the neccessary prerequisities and deploy web application on server:
+<!---
+Run the install script, this will check and download the neccessary prerequisities and deploy web application on server:
 ```sh
 $ sudo ./install.sh --full
 ```
 > **_NOTE:_**  Please check the config file before installation!
-)
+-->
 
 
 For other options to start the installation, try:
