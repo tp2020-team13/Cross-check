@@ -1,6 +1,6 @@
 domain=localhost
-adminUserName=admin
+adminUsername=admin
 adminPassword=admin
-dbUserName=postgres
+dbUsername=postgres
 dbPassword=postgres
 secretKey=123456789abcdefghijklmnoprstuvxz

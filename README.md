@@ -15,17 +15,28 @@ Hardware:
 - 1x CPU
 - min 10GB memory
 
+## Prerequisites
+
+Make sure you have installed all of the following prerequisites on your machine:
+
+- docker-ce - [Download & Install docker-ce](https://docs.docker.com/get-docker/)
+- docker-compose - [Download & Install docker-compose](https://docs.docker.com/compose/install/)
+
 ## Installation
 
-Run the install script, this will check and download the neccessary prerequisities and deploy web application on server:
+When you want to try the application run the install script with --localhost. This will check neccessary prerequisities and deploy web application in localhost mode:
+```sh
+$ ./install.sh --localhost
+```
+> **_NOTE:_**  Only for demonstration purposes! Not all functionality is available!
+
+[comment]: <> (Run the install script, this will check and download the neccessary prerequisities and deploy web application on server:
 ```sh
 $ sudo ./install.sh --full
 ```
 > **_NOTE:_**  Please check the config file before installation!
+)
 
-Automatically installed software:
-- docker-compose 1.22.0
-- docker-ce 18.09
 
 For other options to start the installation, try:
 ```sh
