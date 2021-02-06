@@ -1,0 +1,6 @@
+domain=localhost
+adminUsername=admin
+adminPassword=admin
+dbUsername=postgres
+dbPassword=postgres
+secretKey=123456789abcdefghijklmnoprstuvxz

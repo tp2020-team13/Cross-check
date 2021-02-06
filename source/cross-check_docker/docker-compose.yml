@@ -1,0 +1,44 @@
+version: '2.2'
+services:
+  postgres:
+    build: database/.
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - database-data_production:/var/lib/postgresql/data/ # persist data even if container shuts down
+    expose:
+      - 5433
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    container_name: crosscheck_database
+  backend:
+    build: backend/.
+    restart: always
+    links:
+      - postgres
+    ports:
+      - "8182:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy         
+        #healthcheck:
+        #test: curl -f localhost:8182/be-cross-check/ || exit 1
+        #interval: 10s
+        #timeout: 5s
+        #retries: 5
+    container_name: crosscheck_backend
+  frontend:
+    build: frontend/.
+    ports:
+      - "4200:80"
+    volumes:
+       - ./frontend/config.json:/usr/share/nginx/html/config.json
+    container_name: crosscheck_frontend
+
+volumes:
+  database-data_production: # named volumes can be managed easier using docker-compose
