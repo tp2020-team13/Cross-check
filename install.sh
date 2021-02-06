@@ -207,6 +207,8 @@ function setLocalhostConfigVariable {
   # .env file
   sed -i -E "s/(POSTGRES_USER=).*/\1$dbUsername/" $PATH_MAIN/.env
   sed -i -E "s/(POSTGRES_PASSWORD=).*/\1$dbPassword/" $PATH_MAIN/.env
+  #sed -i -E "s/(BACKEND_TAG=).*/\1$backendVersion/" $PATH_MAIN/.env
+  #sed -i -E "s/(FRONTEND_TAG=).*/\1$frontendVersion/" $PATH_MAIN/.env
 
   # application.production.conf file
   sed -i -E "s/(    adminUserName = \").*(\")/\1$adminUsername\2/" $PATH_BACKEND/application.localhost.conf
