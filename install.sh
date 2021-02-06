@@ -98,17 +98,6 @@ function checkIfRoot {
   fi
 }
 
-function checkDockerGroup {
-  if [ -z "$(groups $SUDO_USER | grep docker)" ]
-  then
-    INFO "Adding $SUDO_USER to group 'docker'"
-    usermod -aG docker $SUDO_USER
-    newgrp docker
-  else
-    INFO "User $SUDO_USER already in group 'docker'"
-  fi
-}
-
 function checkConfig {
   INFO "Checking config variables"
   if [ -z "$adminUsername" ]
@@ -180,9 +169,8 @@ function fullInstall {
   echo -e "\n**Full installation has started**\n"
   checkIfRoot
   checkConfig
-  exportConfigVariable
+  #exportConfigVariable
   checkPrerequisities
-  checkDockerGroup
 }
 
 function localhostInstall {
