@@ -369,6 +369,15 @@ function updateImages {
 
 function ignoreConfigFiles {
   git update-index --assume-unchanged config
+  git update-index --assume-unchanged $PATH_MAIN/.env
+  git update-index --assume-unchanged $PATH_API_GATEWAY/init-letsencrypt.sh
+  git update-index --assume-unchanged $PATH_API_GATEWAY/data/nginx/app.conf
+  git update-index --assume-unchanged $PATH_BACKEND/application.conf
+  git update-index --assume-unchanged $PATH_BACKEND/application.localhost.conf
+  git update-index --assume-unchanged $PATH_BACKEND/application.production.conf
+  git update-index --assume-unchanged $PATH_FRONTEND/config.json
+  git update-index --assume-unchanged $PATH_FRONTEND/config.localhost.json
+  git update-index --assume-unchanged $PATH_FRONTEND/config.production.json
 }
 
 # =======================================
