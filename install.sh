@@ -11,7 +11,7 @@ PATH_API_GATEWAY=$PATH_MAIN/api_gateway
 # =======================================
 
 function example {
-  echo -e "example: sudo $0 --localhost"
+  echo -e "example: $0 --localhost"
 }
 
 function usage {
@@ -28,6 +28,9 @@ function configWarning {
   echo -e "-> dbUserName: $dbUsername"
   echo -e "-> dbPassword: $dbPassword"
   echo -e "-> secretKey: $secretKey"
+  echo -e "-> email: $email"
+  echo -e "-> backendVersion: $backendVersion"
+  echo -e "-> frontendVersion: $frontendVersion"
 }
 
 function help {
@@ -36,9 +39,11 @@ function help {
   configWarning
   echo -e ""
     echo -e "OPTIONS:"
-    echo -e " -h | --help        Display this message and exit"
-    #echo -e " -f | --full        Full installation and deployment"
-    echo -e " -l | --localhost   Run the project as localhost"
+    echo -e " -h | --help        		Display this message and exit"
+    echo -e " -f | --full        		Full installation and deployment"
+    echo -e " -u | --update	 		Update images to the version defined in the config file"
+    echo -e " -l | --localhost   		Run the project as localhost"
+    echo -e " -ul | --update-localhost 	Update images to the version defined in the config file" 
     echo -e ""
   example
 }
@@ -302,7 +307,7 @@ function localhostInstall {
   cd $PATH_MAIN
   docker-compose up --build -d
   cd ../..
-  INFO "Localhost installation completed. Open your browser on https://localhost:4200"
+  INFO "Localhost installation completed. Open your browser on http://localhost:4200"
 }
 
 function updateImagesLocalhost {
