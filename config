@@ -1,8 +1,8 @@
 domain=example.org
-adminUsername=admin1
-adminPassword=admin2
-dbUsername=postgres1
-dbPassword=postgres2
+adminUsername=admin
+adminPassword=admin
+dbUsername=postgres
+dbPassword=postgres
 secretKey=
 email=
 backendVersion=latest

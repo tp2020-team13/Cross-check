@@ -295,7 +295,7 @@ function fullInstall {
   INFO "Generating certificate"
   sudo ./api_gateway/init-letsencrypt.sh
   cd ../../..
-  INFO "Localhost installation completed. Open your browser on https://$domain"
+  INFO "Installation completed. Open your browser on https://$domain"
 }
 
 function localhostInstall {
@@ -305,7 +305,7 @@ function localhostInstall {
   setLocalhostConfigVariable
   INFO "Launching the application"
   cd $PATH_MAIN
-  docker-compose up --build -d
+  docker-compose up --force-recreate -d
   cd ../..
   INFO "Localhost installation completed. Open your browser on http://localhost:4200"
 }
