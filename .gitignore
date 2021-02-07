@@ -1,6 +1,0 @@
-config
-*.conf
-.env
-init-letsencrypt.sh
-*.json
-
