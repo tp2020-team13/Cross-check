@@ -293,7 +293,8 @@ function fullInstall {
   cd $PATH_MAIN
   docker-compose -f docker-compose.prod.yml up --build -d
   INFO "Generating certificate"
-  sudo ./api_gateway/init-letsencrypt.sh
+  cd api_gateway
+  sudo ./init-letsencrypt.sh
   cd ../../..
   INFO "Installation completed. Open your browser on https://$domain"
 }
