@@ -367,9 +367,14 @@ function updateImages {
   cd ../..
 }
 
+function ignoreConfigFiles {
+  git update-index --assume-unchanged config
+}
+
 # =======================================
 # Script starts here
 # =======================================
 
+ignoreConfigFiles
 . ./config
 argumentsCheck $# $@
