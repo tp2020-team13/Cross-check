@@ -1,13 +1,17 @@
 #!/bin/bash
 
 set -e
+PATH_MAIN=./source/cross-check_docker
+PATH_BACKEND=$PATH_MAIN/backend/config
+PATH_FRONTEND=$PATH_MAIN/frontend/config
+PATH_API_GATEWAY=$PATH_MAIN/api_gateway
 
 # =======================================
 # Common functions
 # =======================================
 
 function example {
-  echo -e "example: sudo $0 --localhost"
+  echo -e "example: $0 --localhost"
 }
 
 function usage {
@@ -24,6 +28,9 @@ function configWarning {
   echo -e "-> dbUserName: $dbUsername"
   echo -e "-> dbPassword: $dbPassword"
   echo -e "-> secretKey: $secretKey"
+  echo -e "-> email: $email"
+  echo -e "-> backendVersion: $backendVersion"
+  echo -e "-> frontendVersion: $frontendVersion"
 }
 
 function help {
@@ -32,9 +39,11 @@ function help {
   configWarning
   echo -e ""
     echo -e "OPTIONS:"
-    echo -e " -h | --help        Display this message and exit"
-    #echo -e " -f | --full        Full installation and deployment"
-    echo -e " -l | --localhost   Run the project as localhost"
+    echo -e " -h | --help        		Display this message and exit"
+    echo -e " -f | --full        		Full installation and deployment"
+    echo -e " -u | --update	 		Update images to the version defined in the config file"
+    echo -e " -l | --localhost   		Run the project as localhost"
+    echo -e " -ul | --update-localhost 	Update images to the version defined in the config file" 
     echo -e ""
   example
 }
@@ -61,6 +70,16 @@ function argumentsCheck {
 
       -l|--localhost)
       localhostInstall
+      exit
+      ;;
+
+      -u|--update)
+      updateImages
+      exit
+      ;;
+
+      -ul|--update-localhost)
+      updateImagesLocalhost
       exit
       ;;
 
@@ -98,18 +117,7 @@ function checkIfRoot {
   fi
 }
 
-function checkDockerGroup {
-  if [ -z "$(groups $SUDO_USER | grep docker)" ]
-  then
-    INFO "Adding $SUDO_USER to group 'docker'"
-    usermod -aG docker $SUDO_USER
-    newgrp docker
-  else
-    INFO "User $SUDO_USER already in group 'docker'"
-  fi
-}
-
-function checkConfig {
+function checkLocalhostConfig {
   INFO "Checking config variables"
   if [ -z "$adminUsername" ]
   then
@@ -136,25 +144,124 @@ function checkConfig {
   fi
 }
 
-function exportBasicConfigVariable {
-  INFO "Exporting config variables"
+function checkProductionConfig {
+  INFO "Checking config variables"
+  if [ -z "$adminUsername" ]
+  then
+    ERROR "Please enter adminUsername in the config file"
+    exit
+  fi
+  
+  if [ -z "$adminPassword" ]
+  then
+    ERROR "Please enter adminPassword in the config file"
+    exit
+  fi
 
-  # .env file
-  sed -i -E "s/(POSTGRES_USER=).*/\1$dbUsername/" ./source/cross-check_docker/.env
-  sed -i -E "s/(POSTGRES_PASSWORD=).*/\1$dbPassword/" ./source/cross-check_docker/.env
+  if [ "$adminPassword" == "admin" ]
+  then
+    ERROR "Please change default password!"
+    exit
+  fi
 
-  # application.production.conf file
-  sed -i -E "s/(    adminUserName = \").*(\")/\1$adminUsername\2/" ./source/cross-check_docker/backend/data/application.production.conf
-  sed -i -E "s/(    adminPassword = \").*(\")/\1$adminPassword\2/" ./source/cross-check_docker/backend/data/application.production.conf
-  sed -i -E "s/(    username = \").*(\")/\1$dbUsername\2/" ./source/cross-check_docker/backend/data/application.production.conf
-  sed -i -E "s/(    password = \").*(\")/\1$dbPassword\2/" ./source/cross-check_docker/backend/data/application.production.conf
+  if [ -z "$dbUsername" ]
+  then
+    ERROR "Please enter dbUsername in the config file"
+    exit
+  fi
+
+  if [ -z "$dbPassword" ]
+  then
+    ERROR "Please enter dbPassword in the config file"
+    exit
+  fi
+
+  if [ "$dbPassword" == "postgres" ]
+  then
+    ERROR "Please change default password"
+    exit
+  fi
+
+  if [ "$dbPassword" == "postgres" ]
+  then
+    ERROR "Please change default password"
+    exit
+  fi
+
+  if echo "$domain" | egrep -q "[[:space:]]"
+  then
+    ERROR "Spaces are not allowed in domain"
+  fi
+
+  if [ -z "$secretKey" ]
+  then
+    ERROR "Please enter secretKey in the config file"
+    exit
+  fi
+
+  if [ -z "$email" ]
+  then
+    ERROR "Please enter email in the config file. Adding a valid address is strongly recommended!"
+    exit
+  fi
 }
 
-function exportAllConfigVariable {
+function setLocalhostConfigVariable {
+  INFO "Exporting localhost config variables"
+
+  # .env file
+  sed -i -E "s/(POSTGRES_USER=).*/\1$dbUsername/" $PATH_MAIN/.env
+  sed -i -E "s/(POSTGRES_PASSWORD=).*/\1$dbPassword/" $PATH_MAIN/.env
+  #sed -i -E "s/(BACKEND_TAG=).*/\1$backendVersion/" $PATH_MAIN/.env
+  #sed -i -E "s/(FRONTEND_TAG=).*/\1$frontendVersion/" $PATH_MAIN/.env
 
   # application.production.conf file
-  sed -i -E "s/(    issuer = \").*(\")/\1$domain\2/" ./source/cross-check_docker/backend/data/application.production.conf
-  sed -i -E "s/(    secretKey = \").*(\")/\1$secretKey\2/" ./source/cross-check_docker/backend/data/application.production.conf
+  sed -i -E "s/(    adminUserName = \").*(\")/\1$adminUsername\2/" $PATH_BACKEND/application.localhost.conf
+  sed -i -E "s/(    adminPassword = \").*(\")/\1$adminPassword\2/" $PATH_BACKEND/application.localhost.conf
+  sed -i -E "s/(    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.localhost.conf
+  sed -i -E "s/(    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.localhost.conf
+
+  # replacing the previous contents of the backend config file
+  cat $PATH_BACKEND/application.localhost.conf > $PATH_BACKEND/application.conf
+
+  # replacing the previous contents of the backend config file
+  cat $PATH_FRONTEND/config.localhost.json > $PATH_FRONTEND/config.json
+}
+
+function setProductionConfigVariable {
+  INFO "Exporting production config variables"
+
+  # .env file
+  sed -i -E "s/(POSTGRES_USER=).*/\1$dbUsername/" $PATH_MAIN/.env
+  sed -i -E "s/(POSTGRES_PASSWORD=).*/\1$dbPassword/" $PATH_MAIN/.env
+
+  # application.production.conf file
+  sed -i -E "s/(        allowedHost = \").*(\")/\1$domain\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(    adminUserName = \").*(\")/\1$adminUsername\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(    adminPassword = \").*(\")/\1$adminPassword\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(    issuer = \").*(\")/\1$domain\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(    secretKey = \").*(\")/\1$secretKey\2/" $PATH_BACKEND/application.production.conf
+
+  # replacing the previous contents of the backend config file
+  cat $PATH_BACKEND/application.production.conf > $PATH_BACKEND/application.conf
+
+  # config.production.json file
+  sed -i -E "s/(  \"baseUrl\": \"https:\/\/).*(\/be-cross-check\/\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"baseWs\": \"wss:\/\/).*(\/be-cross-check\/\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+
+  # replacing the previous contents of the backend config file
+  cat $PATH_FRONTEND/config.production.json > $PATH_FRONTEND/config.json
+
+  # api_gateway config file
+  sed -i -E "s/(    server_name ).*(;)/\1$domain\2/" $PATH_API_GATEWAY/data/nginx/app.conf
+  sed -i -E "s/(    ssl_certificate \/etc\/letsencrypt\/live\/).*(\/fullchain.pem;)/\1$domain\2/" $PATH_API_GATEWAY/data/nginx/app.conf
+  sed -i -E "s/(    ssl_certificate_key \/etc\/letsencrypt\/live\/).*(\/privkey.pem;)/\1$domain\2/" $PATH_API_GATEWAY/data/nginx/app.conf
+
+  # init-letsencrypt.sh file
+  sed -i -E "s/(domains=\().*(\))/\1$domain\2/" $PATH_API_GATEWAY/init-letsencrypt.sh
+  sed -i -E "s/(email=\").*(\")/\1$email\2/" $PATH_API_GATEWAY/init-letsencrypt.sh
 }
 
 function checkPrerequisities {
@@ -176,31 +283,117 @@ function checkPrerequisities {
   fi
 }
 
+function runFull {
+  INFO "Launching the application"
+  cd $PATH_MAIN
+  docker-compose -f docker-compose.yml up --build -d
+  cd ../..
+}
+
+function runApi_gateway {
+  INFO "Generating certificate"
+  cd $PATH_MAIN/api_gateway
+  sudo ./init-letsencrypt.sh
+  cd ../../..
+}
+
 function fullInstall {
   echo -e "\n**Full installation has started**\n"
   checkIfRoot
-  checkConfig
-  exportConfigVariable
+  checkProductionConfig
   checkPrerequisities
-  checkDockerGroup
+  setProductionConfigVariable
+  runFull
+  runApi_gateway
+  INFO "Installation completed. Open your browser on https://$domain"
+}
+
+function runLocalhost {
+  INFO "Launching the application"
+  cd $PATH_MAIN
+  docker-compose -f docker-compose.yml -f docker-compose.localhost.yml up --build -d
+  cd ../..
 }
 
 function localhostInstall {
   echo -e "\n**Localhost installation has started**\n"
-  checkConfig
+  checkLocalhostConfig
   checkPrerequisities
-  exportBasicConfigVariable
-  INFO "Launching the application"
-  cd ./source/cross-check_docker
-  docker-compose up --build -d
-  cd ../..
+  setLocalhostConfigVariable
+  runLocalhost
   INFO "Localhost installation completed. Open your browser on http://localhost:4200"
+}
 
+function updateImagesLocalhost {
+
+  INFO "Update frontend to version $frontendVersion"
+  INFO "Update backend to version $backendVersion"
+
+  docker pull stucrosscheck/frontend:$frontendVersion
+  docker pull stucrosscheck/backend:$backendVersion
+
+  frontendID=$(echo $(docker ps | grep "crosscheck_frontend") | cut -d " " -f 1)
+  backendID=$(echo $(docker ps | grep "crosscheck_backend") | cut -d " " -f 1)
+
+  INFO "Frontend ID: $frontendID"
+  INFO "Backend ID: $backendID"
+
+  docker stop $frontendID
+  docker stop $backendID
+
+  docker rm $frontendID
+  docker rm $backendID
+
+  runLocalhost
+}
+
+function updateImages {
+  gatewayID=$(echo $(docker ps | grep "crosscheck_nginx_1") | cut -d " " -f 1)
+
+  if [ -z "$gatewayID" ]
+  then
+    ERROR "Update can only be used during production"
+    exit
+  fi
+
+  INFO "Update frontend to version $frontendVersion"
+  INFO "Update backend to version $backendVersion"
+
+  docker pull stucrosscheck/frontend:$frontendVersion
+  docker pull stucrosscheck/backend:$backendVersion
+
+  frontendID=$(echo $(docker ps | grep "crosscheck_frontend") | cut -d " " -f 1)
+  backendID=$(echo $(docker ps | grep "crosscheck_backend") | cut -d " " -f 1)
+
+  INFO "Frontend ID: $frontendID"
+  INFO "Backend ID: $backendID"
+
+  docker stop $frontendID
+  docker stop $backendID
+
+  docker rm $frontendID
+  docker rm $backendID
+
+  runFull
+}
+
+function ignoreConfigFiles {
+  git update-index --assume-unchanged config
+  git update-index --assume-unchanged $PATH_MAIN/.env
+  git update-index --assume-unchanged $PATH_API_GATEWAY/init-letsencrypt.sh
+  git update-index --assume-unchanged $PATH_API_GATEWAY/data/nginx/app.conf
+  git update-index --assume-unchanged $PATH_BACKEND/application.conf
+  git update-index --assume-unchanged $PATH_BACKEND/application.localhost.conf
+  git update-index --assume-unchanged $PATH_BACKEND/application.production.conf
+  git update-index --assume-unchanged $PATH_FRONTEND/config.json
+  git update-index --assume-unchanged $PATH_FRONTEND/config.localhost.json
+  git update-index --assume-unchanged $PATH_FRONTEND/config.production.json
 }
 
 # =======================================
 # Script starts here
 # =======================================
 
+ignoreConfigFiles
 . ./config
 argumentsCheck $# $@

@@ -1,0 +1,5 @@
+{
+  "production": true,
+  "baseUrl": "https://example.org/be-cross-check/",
+  "baseWs": "wss://example.org/be-cross-check/"
+}

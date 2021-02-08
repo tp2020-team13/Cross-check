@@ -21,8 +21,6 @@ services:
     restart: always
     links:
       - postgres
-    ports:
-      - "8182:8080"
     depends_on:
       postgres:
         condition: service_healthy         
@@ -34,10 +32,8 @@ services:
     container_name: crosscheck_backend
   frontend:
     build: frontend/.
-    ports:
-      - "4200:80"
     volumes:
-       - ./frontend/config.json:/usr/share/nginx/html/config.json
+       - ./frontend/config/config.json:/usr/share/nginx/html/config.json
     container_name: crosscheck_frontend
 
 volumes:

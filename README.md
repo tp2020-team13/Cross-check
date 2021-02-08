@@ -24,20 +24,17 @@ Make sure you have installed all of the following prerequisites on your machine:
 
 ## Installation
 
+Run the install script, this will check neccessary prerequisities and deploy web application on server:
+```sh
+$ sudo ./install.sh --full
+```
+> **_NOTE:_**  Please check the config file before installation!
+
 When you want to try the application run the install script with --localhost. This will check neccessary prerequisities and deploy web application in localhost mode:
 ```sh
 $ ./install.sh --localhost
 ```
 > **_NOTE:_**  Only for demonstration purposes! Not all functionality is available!
-
-<!---
-Run the install script, this will check and download the neccessary prerequisities and deploy web application on server:
-```sh
-$ sudo ./install.sh --full
-```
-> **_NOTE:_**  Please check the config file before installation!
--->
-
 
 For other options to start the installation, try:
 ```sh
