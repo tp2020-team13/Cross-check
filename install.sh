@@ -283,20 +283,36 @@ function checkPrerequisities {
   fi
 }
 
+function runFull {
+  INFO "Launching the application"
+  cd $PATH_MAIN
+  docker-compose -f docker-compose.yml up --build -d
+  cd ../..
+}
+
+function runApi_gateway {
+  INFO "Generating certificate"
+  cd $PATH_MAIN/api_gateway
+  sudo ./init-letsencrypt.sh
+  cd ../../..
+}
+
 function fullInstall {
   echo -e "\n**Full installation has started**\n"
   checkIfRoot
   checkProductionConfig
   checkPrerequisities
   setProductionConfigVariable
+  runFull
+  runApi_gateway
+  INFO "Installation completed. Open your browser on https://$domain"
+}
+
+function runLocalhost {
   INFO "Launching the application"
   cd $PATH_MAIN
-  docker-compose -f docker-compose.prod.yml up --build -d
-  INFO "Generating certificate"
-  cd api_gateway
-  sudo ./init-letsencrypt.sh
-  cd ../../..
-  INFO "Installation completed. Open your browser on https://$domain"
+  docker-compose -f docker-compose.yml -f docker-compose.localhost.yml up --build -d
+  cd ../..
 }
 
 function localhostInstall {
@@ -304,17 +320,14 @@ function localhostInstall {
   checkLocalhostConfig
   checkPrerequisities
   setLocalhostConfigVariable
-  INFO "Launching the application"
-  cd $PATH_MAIN
-  docker-compose up --force-recreate -d
-  cd ../..
+  runLocalhost
   INFO "Localhost installation completed. Open your browser on http://localhost:4200"
 }
 
 function updateImagesLocalhost {
 
-  INFO "Update frontend to version $frontendID"
-  INFO "Update backend to version $backendID"
+  INFO "Update frontend to version $frontendVersion"
+  INFO "Update backend to version $backendVersion"
 
   docker pull stucrosscheck/frontend:$frontendVersion
   docker pull stucrosscheck/backend:$backendVersion
@@ -331,9 +344,7 @@ function updateImagesLocalhost {
   docker rm $frontendID
   docker rm $backendID
 
-  cd $PATH_MAIN
-  docker-compose up --build -d
-  cd ../..
+  runLocalhost
 }
 
 function updateImages {
@@ -345,8 +356,8 @@ function updateImages {
     exit
   fi
 
-  INFO "Update frontend to version $frontendID"
-  INFO "Update backend to version $backendID"
+  INFO "Update frontend to version $frontendVersion"
+  INFO "Update backend to version $backendVersion"
 
   docker pull stucrosscheck/frontend:$frontendVersion
   docker pull stucrosscheck/backend:$backendVersion
@@ -363,9 +374,7 @@ function updateImages {
   docker rm $frontendID
   docker rm $backendID
 
-  cd $PATH_MAIN
-  docker-compose -f docker-compose.prod.yml up --build -d
-  cd ../..
+  runFull
 }
 
 function ignoreConfigFiles {
