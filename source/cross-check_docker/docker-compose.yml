@@ -35,6 +35,18 @@ services:
     volumes:
        - ./frontend/config/config.json:/usr/share/nginx/html/config.json
     container_name: crosscheck_frontend
+  graphql-engine:
+    image: hasura/graphql-engine:v1.3.3
+    links:
+      - postgres
+      - backend
+    restart: always
+    environment: 
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5433/${POSTGRES_DB}
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: ${GRAPHQL_PASSWORD}
+      HASURA_GRAPHQL_AUTH_HOOK: "http://crosscheck_backend:8080/auth/hasura-role"
 
 volumes:
   database-data_production: # named volumes can be managed easier using docker-compose
