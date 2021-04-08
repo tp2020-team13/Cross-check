@@ -83,6 +83,11 @@ function argumentsCheck {
       exit
       ;;
 
+      -tc|--track-config)
+      trackConfigFiles
+      exit
+      ;;
+
       *)
       ERROR "Uknown argument, see --help for more info \nExiting... \n"
       exit
@@ -218,8 +223,8 @@ function setLocalhostConfigVariable {
   # application.production.conf file
   sed -i -E "s/(    adminUserName = \").*(\")/\1$adminUsername\2/" $PATH_BACKEND/application.localhost.conf
   sed -i -E "s/(    adminPassword = \").*(\")/\1$adminPassword\2/" $PATH_BACKEND/application.localhost.conf
-  sed -i -E "s/(    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.localhost.conf
-  sed -i -E "s/(    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.localhost.conf
+  sed -i -E "s/(^    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.localhost.conf
+  sed -i -E "s/(^    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.localhost.conf
 
   # replacing the previous contents of the backend config file
   cat $PATH_BACKEND/application.localhost.conf > $PATH_BACKEND/application.conf
@@ -274,6 +279,7 @@ function checkPrerequisities {
     exit
   fi
 
+# whereis docker-compose | grep -oP "docker-compose: \K.*"
   if test -f /usr/local/bin/docker-compose; then
     dockerComposeVersion=$(/usr/local/bin/docker-compose --version)
     INFO "$dockerComposeVersion is installed"
@@ -301,7 +307,7 @@ function fullInstall {
   echo -e "\n**Full installation has started**\n"
   checkIfRoot
   checkProductionConfig
-  checkPrerequisities
+  # checkPrerequisities
   setProductionConfigVariable
   runFull
   runApi_gateway
@@ -318,7 +324,7 @@ function runLocalhost {
 function localhostInstall {
   echo -e "\n**Localhost installation has started**\n"
   checkLocalhostConfig
-  checkPrerequisities
+  # checkPrerequisities
   setLocalhostConfigVariable
   runLocalhost
   INFO "Localhost installation completed. Open your browser on http://localhost:4200"
@@ -375,6 +381,19 @@ function updateImages {
   docker rm $backendID
 
   runFull
+}
+
+function trackConfigFiles {
+  git update-index --no-assume-unchanged config
+  git update-index --no-assume-unchanged $PATH_MAIN/.env
+  git update-index --no-assume-unchanged $PATH_API_GATEWAY/init-letsencrypt.sh
+  git update-index --no-assume-unchanged $PATH_API_GATEWAY/data/nginx/app.conf
+  git update-index --no-assume-unchanged $PATH_BACKEND/application.conf
+  git update-index --no-assume-unchanged $PATH_BACKEND/application.localhost.conf
+  git update-index --no-assume-unchanged $PATH_BACKEND/application.production.conf
+  git update-index --no-assume-unchanged $PATH_FRONTEND/config.json
+  git update-index --no-assume-unchanged $PATH_FRONTEND/config.localhost.json
+  git update-index --no-assume-unchanged $PATH_FRONTEND/config.production.json
 }
 
 function ignoreConfigFiles {

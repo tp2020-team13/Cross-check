@@ -42,6 +42,7 @@ services:
     container_name: crosscheck_frontend
   graphql-engine:
     image: hasura/graphql-engine:v1.3.3
+    container_name: crosscheck_graphql
     links:
       - postgres
       - backend
@@ -52,6 +53,23 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: ${GRAPHQL_PASSWORD}
       HASURA_GRAPHQL_AUTH_HOOK: "http://crosscheck_backend:8080/auth/hasura-role"
-
+  minio:
+    image: minio/minio
+    volumes:
+      - minio-data:/data
+    container_name: crosscheck_minio
+    ports:
+    - "9001:9000"
+    environment:
+      MINIO_ROOT_USER: miniominio
+      MINIO_ROOT_PASSWORD: miniominio
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    
 volumes:
   database-data_production: # named volumes can be managed easier using docker-compose
+  minio-data:
