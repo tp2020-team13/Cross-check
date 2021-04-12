@@ -56,10 +56,8 @@ services:
   minio:
     image: minio/minio
     volumes:
-      - minio-data:/data
+      - ../../../minio_data:/data
     container_name: crosscheck_minio
-    ports:
-    - "9000:9000"
     environment:
       MINIO_ROOT_USER: miniouser
       MINIO_ROOT_PASSWORD: miniopassword
