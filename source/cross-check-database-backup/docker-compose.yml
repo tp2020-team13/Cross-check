@@ -1,0 +1,15 @@
+version: '3'
+services:
+  database:
+    image: postgres:13
+    container_name: crosscheck_database_backup
+    restart: always
+    volumes:
+        - ./data-slave:/var/lib/postgresql/data
+        - ./my-postgres.conf:/etc/postgresql/postgresql.conf
+       - ./my-pg_hba.conf:/etc/postgresql/pg_hba.conf
+    expose:
+      - 5432
+    environment:
+      - 'POSTGRES_PASSWORD=my_password'
+      - 'POSTGRES_DB=my_default_database'

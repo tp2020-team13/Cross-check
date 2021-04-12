@@ -1,5 +1,8 @@
 {
   "production": true,
   "baseUrl": "https://example.org/be-cross-check/",
-  "baseWs": "wss://example.org/be-cross-check/"
+  "baseWs": "wss://example.org/be-cross-check/",
+  "graphqlEndpoint": "https://example.org/be-hasura/v1/graphql",
+  "graphqlWSEndpoint": "wss://example.org/be-hasura/v1/graphql",
+  "gTag": ""
 }

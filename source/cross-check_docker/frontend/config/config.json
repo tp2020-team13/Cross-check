@@ -1,5 +1,8 @@
 {
   "production": false,
   "baseUrl": "http://localhost:8182/be-cross-check/",
-  "baseWs": "ws://localhost:8182/be-cross-check/"
+  "baseWs": "ws://localhost:8182/be-cross-check/",
+  "graphqlEndpoint": "https://localhost:8090/be-hasura/v1/graphql",
+  "graphqlWSEndpoint": "wss://localhost:8090/be-hasura/v1/graphql",
+  "gTag": ""
 }

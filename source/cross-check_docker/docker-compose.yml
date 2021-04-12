@@ -6,10 +6,15 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: always
     volumes:
       - database-data_production:/var/lib/postgresql/data/ # persist data even if container shuts down
+      - ./database/crosscheck-postgres.conf:/etc/postgresql/postgresql.conf
+      - ./database/crosscheck-pg_hba.conf:/etc/postgresql/pg_hba.conf
     expose:
       - 5433
+    ports:
+      - "0.0.0.0:5433:5433"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
@@ -35,6 +40,33 @@ services:
     volumes:
        - ./frontend/config/config.json:/usr/share/nginx/html/config.json
     container_name: crosscheck_frontend
-
+  graphql-engine:
+    image: hasura/graphql-engine:v1.3.3
+    container_name: crosscheck_graphql
+    links:
+      - postgres
+      - backend
+    restart: always
+    environment: 
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@crosscheck_database:5432/${POSTGRES_DB}
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: ${GRAPHQL_PASSWORD}
+      HASURA_GRAPHQL_AUTH_HOOK: "http://crosscheck_backend:8080/be-cross-check/auth/hasura-role"
+  minio:
+    image: minio/minio
+    volumes:
+      - ../../../minio_data:/data
+    container_name: crosscheck_minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    
 volumes:
   database-data_production: # named volumes can be managed easier using docker-compose
