@@ -7,3 +7,7 @@ secretKey=
 email=
 backendVersion=latest
 frontendVersion=latest
+graphqlPassword=graphql
+minioUser=minioUser
+minioPassword=minioPassword
+gTag=
