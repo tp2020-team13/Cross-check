@@ -228,7 +228,9 @@ function setLocalhostConfigVariable {
   sed -i -E "s/(    adminPassword = \").*(\")/\1$adminPassword\2/" $PATH_BACKEND/application.localhost.conf
   sed -i -E "s/(^    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.localhost.conf
   sed -i -E "s/(^    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.localhost.conf
-
+  sed -i -E "s/(^     accessKey = \").*(\")/\1$minioUser\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^     secretKey = \").*(\")/\1$minioPassword\2/" $PATH_BACKEND/application.production.conf
+  
   # replacing the previous contents of the backend config file
   cat $PATH_BACKEND/application.localhost.conf > $PATH_BACKEND/application.conf
 
@@ -254,6 +256,9 @@ function setProductionConfigVariable {
   sed -i -E "s/(^    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.production.conf
   sed -i -E "s/(    issuer = \").*(\")/\1$domain\2/" $PATH_BACKEND/application.production.conf
   sed -i -E "s/(    secretKey = \").*(\")/\1$secretKey\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^     accessKey = \").*(\")/\1$minioUser\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^     secretKey = \").*(\")/\1$minioPassword\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^     endpoint = \").*(\"https:\/\/)/\1$domain\2/" $PATH_BACKEND/application.production.conf
 
   # replacing the previous contents of the backend config file
   cat $PATH_BACKEND/application.production.conf > $PATH_BACKEND/application.conf
