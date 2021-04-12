@@ -217,6 +217,9 @@ function setLocalhostConfigVariable {
   # .env file
   sed -i -E "s/(POSTGRES_USER=).*/\1$dbUsername/" $PATH_MAIN/.env
   sed -i -E "s/(POSTGRES_PASSWORD=).*/\1$dbPassword/" $PATH_MAIN/.env
+  sed -i -E "s/(GRAPHQL_PASSWORD=).*/\1$graphqlPassword/" $PATH_MAIN/.env
+  sed -i -E "s/(MINIO_USER=).*/\1$minioUser/" $PATH_MAIN/.env
+  sed -i -E "s/(MINIO_PASSWORD=).*/\1$minioPassword/" $PATH_MAIN/.env
   #sed -i -E "s/(BACKEND_TAG=).*/\1$backendVersion/" $PATH_MAIN/.env
   #sed -i -E "s/(FRONTEND_TAG=).*/\1$frontendVersion/" $PATH_MAIN/.env
 
@@ -239,13 +242,16 @@ function setProductionConfigVariable {
   # .env file
   sed -i -E "s/(POSTGRES_USER=).*/\1$dbUsername/" $PATH_MAIN/.env
   sed -i -E "s/(POSTGRES_PASSWORD=).*/\1$dbPassword/" $PATH_MAIN/.env
+  sed -i -E "s/(GRAPHQL_PASSWORD=).*/\1$graphqlPassword/" $PATH_MAIN/.env
+  sed -i -E "s/(MINIO_USER=).*/\1$minioUser/" $PATH_MAIN/.env
+  sed -i -E "s/(MINIO_PASSWORD=).*/\1$minioPassword/" $PATH_MAIN/.env
 
   # application.production.conf file
   sed -i -E "s/(        allowedHost = \").*(\")/\1$domain\2/" $PATH_BACKEND/application.production.conf
-  sed -i -E "s/(    adminUserName = \").*(\")/\1$adminUsername\2/" $PATH_BACKEND/application.production.conf
-  sed -i -E "s/(    adminPassword = \").*(\")/\1$adminPassword\2/" $PATH_BACKEND/application.production.conf
-  sed -i -E "s/(    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.production.conf
-  sed -i -E "s/(    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^            username = \").*(\")/\1$adminUsername\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^            password = \").*(\")/\1$adminPassword\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^    username = \").*(\")/\1$dbUsername\2/" $PATH_BACKEND/application.production.conf
+  sed -i -E "s/(^    password = \").*(\")/\1$dbPassword\2/" $PATH_BACKEND/application.production.conf
   sed -i -E "s/(    issuer = \").*(\")/\1$domain\2/" $PATH_BACKEND/application.production.conf
   sed -i -E "s/(    secretKey = \").*(\")/\1$secretKey\2/" $PATH_BACKEND/application.production.conf
 
@@ -255,6 +261,9 @@ function setProductionConfigVariable {
   # config.production.json file
   sed -i -E "s/(  \"baseUrl\": \"https:\/\/).*(\/be-cross-check\/\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
   sed -i -E "s/(  \"baseWs\": \"wss:\/\/).*(\/be-cross-check\/\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"graphqlEndpoint\": \"https:\/\/).*(\/be-hasura/v1/graphql\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"graphqlWSEndpoint\": \"wss:\/\/).*(\/be-hasura/v1/graphql\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"gTag\":  \").*(\")/\1$gTag\2/" $PATH_FRONTEND/config.production.json
 
   # replacing the previous contents of the backend config file
   cat $PATH_FRONTEND/config.production.json > $PATH_FRONTEND/config.json
