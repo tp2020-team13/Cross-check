@@ -261,9 +261,9 @@ function setProductionConfigVariable {
   # config.production.json file
   sed -i -E "s/(  \"baseUrl\": \"https:\/\/).*(\/be-cross-check\/\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
   sed -i -E "s/(  \"baseWs\": \"wss:\/\/).*(\/be-cross-check\/\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
-  sed -i -E "s/(  \"graphqlEndpoint\": \"https:\/\/).*(\/be-hasura/v1/graphql\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
-  sed -i -E "s/(  \"graphqlWSEndpoint\": \"wss:\/\/).*(\/be-hasura/v1/graphql\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
-  sed -i -E "s/(  \"gTag\":  \").*(\")/\1$gTag\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"graphqlEndpoint\": \"https:\/\/).*(\/be-hasura\/v1\/graphql\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"graphqlWSEndpoint\": \"wss:\/\/).*(\/be-hasura\/v1\/graphql\")/\1$domain\2/" $PATH_FRONTEND/config.production.json
+  sed -i -E "s/(  \"gTag\": \").*(\")/\1$gTag\2/" $PATH_FRONTEND/config.production.json
 
   # replacing the previous contents of the backend config file
   cat $PATH_FRONTEND/config.production.json > $PATH_FRONTEND/config.json
