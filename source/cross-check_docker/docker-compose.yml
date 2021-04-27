@@ -53,6 +53,8 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: ${GRAPHQL_PASSWORD}
       HASURA_GRAPHQL_AUTH_HOOK: "http://crosscheck_backend:8080/be-cross-check/auth/hasura-role"
+      NOTIFICATIONS_ENDPOINT: "http://crosscheck_backend:8080/be-cross-check/notifications/send"
+      NOTIFICATIONS_SECRET: "secret"
   minio:
     image: minio/minio
     volumes:
