@@ -221,6 +221,8 @@ function setLocalhostConfigVariable {
   sed -i -E "s/(GRAPHQL_PASSWORD=).*/\1$graphqlPassword/" $PATH_MAIN/.env
   sed -i -E "s/(MINIO_USER=).*/\1$minioUser/" $PATH_MAIN/.env
   sed -i -E "s/(MINIO_PASSWORD=).*/\1$minioPassword/" $PATH_MAIN/.env
+  sed -i -E "s/(USER_ID_U=).*/\1$userIdU/" $PATH_MAIN/.env
+  sed -i -E "s/(USER_ID_G=).*/\1$userIdG/" $PATH_MAIN/.env
   #sed -i -E "s/(BACKEND_TAG=).*/\1$backendVersion/" $PATH_MAIN/.env
   #sed -i -E "s/(FRONTEND_TAG=).*/\1$frontendVersion/" $PATH_MAIN/.env
 
@@ -248,6 +250,8 @@ function setProductionConfigVariable {
   sed -i -E "s/(GRAPHQL_PASSWORD=).*/\1$graphqlPassword/" $PATH_MAIN/.env
   sed -i -E "s/(MINIO_USER=).*/\1$minioUser/" $PATH_MAIN/.env
   sed -i -E "s/(MINIO_PASSWORD=).*/\1$minioPassword/" $PATH_MAIN/.env
+  sed -i -E "s/(USER_ID_U=).*/\1$userIdU/" $PATH_MAIN/.env
+  sed -i -E "s/(USER_ID_G=).*/\1$userIdG/" $PATH_MAIN/.env
 
   # application.production.conf file
   sed -i -E "s/(        allowedHost = \").*(\")/\1$domain\2/" $PATH_BACKEND/application.production.conf

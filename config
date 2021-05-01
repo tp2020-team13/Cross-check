@@ -11,3 +11,5 @@ graphqlPassword=graphql
 minioUser=minioUser
 minioPassword=minioPassword
 gTag=
+userIdU=1000
+userIdG=1000
