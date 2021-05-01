@@ -2,7 +2,7 @@ Install rclone: curl https://rclone.org/install.sh | sudo bash
 
 Check permision on .../crosscheck_data/minio_data folder if owner is user (e.g student:student)
 
-run startRclone.sh script as user on background (use './startRclone.sh &')
+run startRclone.sh script as user on background (use 'setsid ./startRclone.sh')
 
 Check if synchronization works
 
