@@ -19,6 +19,9 @@ services:
   certbot:
     image: certbot/certbot
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "certbot --version || exit 1"]
+      interval: 10s
     volumes:
       - ../../../../crosscheck_data/certbot_data/conf:/etc/letsencrypt
       - ../../../../crosscheck_data/certbot_data/www:/var/www/certbot
