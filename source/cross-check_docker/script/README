@@ -1,0 +1,43 @@
+Install rclone: curl https://rclone.org/install.sh | sudo bash
+
+Check permision on .../crosscheck_data/minio_data folder if owner is user (e.g student:student)
+
+run startRclone.sh script as user on background (use './startRclone.sh &')
+
+Check if synchronization works
+
+
+Possible problems and solutions:
+
+2021/04/29 17:48:56 Failed to create file system for "crosscheck-bkp-remote:../../data/crosscheck/crosscheck-backup/minio_data": couldn't connect to ssh-agent: SSH agent requested but SSH_AUTH_SOCK not-specified
+Add this into ~/.bashrc file
+
+#CUSTOM_CONFIG
+SSH_ENV=$HOME/.ssh/environment
+
+function start_agent {
+     echo "Initialising new SSH agent..."
+     /usr/bin/ssh-agent | sed 's/^echo/#echo/' > ${SSH_ENV}
+     echo succeeded
+     chmod 600 ${SSH_ENV}
+     . ${SSH_ENV} > /dev/null
+     /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+
+if [ -f "${SSH_ENV}" ]; then
+     . ${SSH_ENV} > /dev/null
+     #ps ${SSH_AGENT_PID} doesn't work under cywgin
+     ps -efp ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+         start_agent;
+     }
+else
+     start_agent;
+fi
+
+
+2017/03/19 20:50:59 Failed to create file system for "Macmini:": couldn't connect ssh: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+run:
+eval `ssh-agent`
+eval `ssh-agent -k`
