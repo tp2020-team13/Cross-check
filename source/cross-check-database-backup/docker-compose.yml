@@ -11,3 +11,4 @@ services:
     environment:
       - 'POSTGRES_PASSWORD=my_password'
       - 'POSTGRES_DB=my_default_database'
+    network_mode: host
