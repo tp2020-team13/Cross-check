@@ -75,7 +75,8 @@ function argumentsCheck {
 
       -u|--update)
       # updateImages
-      runFull
+      # runFull
+      updateAndRunFull
       exit
       ;;
 
@@ -311,7 +312,14 @@ function checkPrerequisities {
 function runFull {
   INFO "Launching the application"
   cd $PATH_MAIN
-  docker-compose pull
+  docker-compose -f docker-compose.yml up --build -d
+  cd ../..
+}
+
+function updateAndRunFull {
+  INFO "Launching the application"
+  cd $PATH_MAIN
+  docker-compose down
   docker-compose -f docker-compose.yml up --build -d
   cd ../..
 }
