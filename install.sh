@@ -75,8 +75,8 @@ function argumentsCheck {
 
       -u|--update)
       # updateImages
-      # runFull
-      updateAndRunFull
+      runFull
+      # updateAndRunFull
       exit
       ;;
 
