@@ -311,6 +311,7 @@ function checkPrerequisities {
 function runFull {
   INFO "Launching the application"
   cd $PATH_MAIN
+  docker-compose pull
   docker-compose -f docker-compose.yml up --build -d
   cd ../..
 }
