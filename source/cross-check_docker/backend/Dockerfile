@@ -1,4 +1,4 @@
-FROM stucrosscheck/backend:v2.3.1
+FROM stucrosscheck/backend:v2.3.2
 
 COPY config/application.conf /application.conf
 COPY ./migrate_and_run.sh /migrate_and_run.sh
